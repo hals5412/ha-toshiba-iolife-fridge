@@ -1,0 +1,105 @@
+{
+  "entity": {
+    "sensor": {
+      "ice_making_status": {
+        "default": "mdi:cube-outline",
+        "state": {
+          "water_shortage": "mdi:water-alert",
+          "ice_full": "mdi:cube",
+          "stop": "mdi:cube-off-outline"
+        }
+      },
+      "ice_making": {
+        "default": "mdi:cube-outline",
+        "state": {
+          "quick": "mdi:cube-send",
+          "off": "mdi:cube-off-outline"
+        }
+      },
+      "power_saving_mode": {
+        "default": "mdi:leaf"
+      },
+      "cooling": {
+        "default": "mdi:snowflake"
+      },
+      "error_code": {
+        "default": "mdi:alert-circle-outline"
+      },
+      "chilled_mode": {
+        "default": "mdi:fish",
+        "state": {
+          "thawing": "mdi:water-thermometer-outline"
+        }
+      },
+      "outside_temperature": {
+        "default": "mdi:home-thermometer-outline"
+      },
+      "refrigerator_setting": {
+        "default": "mdi:thermometer",
+        "state": {
+          "auto_controlled": "mdi:autorenew"
+        }
+      },
+      "freezer_setting": {
+        "default": "mdi:thermometer-low",
+        "state": {
+          "auto_controlled": "mdi:autorenew"
+        }
+      },
+      "eco_status": {
+        "default": "mdi:leaf",
+        "state": {
+          "normal": "mdi:leaf-off",
+          "precool": "mdi:snowflake-alert"
+        }
+      }
+    },
+    "binary_sensor": {
+      "water_shortage": {
+        "default": "mdi:water-check",
+        "state": {
+          "on": "mdi:water-alert"
+        }
+      },
+      "ice_full": {
+        "default": "mdi:cube-outline",
+        "state": {
+          "on": "mdi:cube"
+        }
+      },
+      "defrosting": {
+        "default": "mdi:snowflake-melt"
+      },
+      "moisturizing": {
+        "default": "mdi:water-outline",
+        "state": {
+          "on": "mdi:water"
+        }
+      },
+      "uv_sterilization": {
+        "default": "mdi:weather-sunny-off",
+        "state": {
+          "on": "mdi:weather-sunny"
+        }
+      },
+      "ice_tray_cleaning": {
+        "default": "mdi:creation-outline",
+        "state": {
+          "on": "mdi:creation"
+        }
+      },
+      "refrigerator_high_temp": {
+        "default": "mdi:thermometer-check",
+        "state": {
+          "on": "mdi:thermometer-alert"
+        }
+      },
+      "freezer_high_temp": {
+        "default": "mdi:thermometer-check",
+        "state": {
+          "on": "mdi:thermometer-alert"
+        }
+      }
+    }
+  }
+}

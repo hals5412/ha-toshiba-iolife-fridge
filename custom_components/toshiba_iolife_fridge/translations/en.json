@@ -1,0 +1,204 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Toshiba IoLIFE refrigerator",
+        "description": "Log in with your IoLIFE account to fetch the local key. The password is not stored.",
+        "data": {
+          "account": "IoLIFE account (email)",
+          "password": "Password",
+          "host": "Refrigerator IP address"
+        }
+      },
+      "select": {
+        "title": "Select refrigerator",
+        "data": {
+          "device_id": "Refrigerator"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate",
+        "description": "The local key was rejected by the refrigerator. Log in again to fetch a new key.",
+        "data": {
+          "account": "IoLIFE account (email)",
+          "password": "Password",
+          "host": "Refrigerator IP address"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Could not log in to IoLIFE.",
+      "no_refrigerator": "No refrigerator is registered to this account.",
+      "cannot_connect": "Could not reach the IoLIFE cloud."
+    },
+    "abort": {
+      "already_configured": "This refrigerator is already configured.",
+      "reauth_successful": "Re-authentication was successful.",
+      "cannot_connect_device": "Got keys from IoLIFE, but the refrigerator did not answer on the LAN. Check the IP address.",
+      "cannot_get_key": "Could not get the local key from IoLIFE."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "ice_making_status": {
+        "name": "Ice maker status",
+        "state": {
+          "running": "Making ice",
+          "water_shortage": "Water shortage",
+          "ice_full": "Ice bin full",
+          "stop": "Stopped"
+        }
+      },
+      "ice_making": {
+        "name": "Ice making mode",
+        "state": {
+          "normal": "Ice making",
+          "quick": "Rapid ice making",
+          "off": "Off"
+        }
+      },
+      "power_saving_mode": {
+        "name": "Power saving mode",
+        "state": {
+          "normal": "Off",
+          "power_saving_auto": "Power saving (value 1)",
+          "power_saving_auto_plus": "Auto eco",
+          "power_saving": "Power saving (value 3)",
+          "low_power_cooling": "Extra eco"
+        }
+      },
+      "cooling": {
+        "name": "Upper freezer mode",
+        "state": {
+          "normal": "Normal freezing",
+          "quick_freezing": "Quick freezing",
+          "rough_heat_removal": "Heat removal",
+          "cool_cooking": "Other (value 7)",
+          "timer": "Custom cooling",
+          "frozen_rice": "Frozen rice"
+        }
+      },
+      "outside_temperature": {
+        "name": "Outside temperature"
+      },
+      "estimated_power": {
+        "name": "Estimated power"
+      },
+      "estimated_daily_energy": {
+        "name": "Estimated energy (last 24 hours)"
+      },
+      "error_code": {
+        "name": "Error code"
+      },
+      "chilled_mode": {
+        "name": "Chilled room",
+        "state": {
+          "normal": "Normal chilled",
+          "ice_crystal": "Ice crystal chilled",
+          "deli": "Deli chilled",
+          "thawing": "Thawing"
+        }
+      },
+      "refrigerator_setting": {
+        "name": "Refrigerator temperature setting",
+        "state": {
+          "weak": "Weak",
+          "slightly_weak": "Slightly weak",
+          "medium": "Medium",
+          "slightly_strong": "Slightly strong",
+          "strong": "Strong",
+          "auto_controlled": "Automatic (other mode)"
+        }
+      },
+      "freezer_setting": {
+        "name": "Freezer temperature setting",
+        "state": {
+          "weak": "Weak",
+          "slightly_weak": "Slightly weak",
+          "medium": "Medium",
+          "slightly_strong": "Slightly strong",
+          "strong": "Strong",
+          "auto_controlled": "Automatic (other mode)"
+        }
+      },
+      "eco_status": {
+        "name": "Auto eco operation",
+        "state": {
+          "normal": "Normal",
+          "eco": "Eco",
+          "precool": "Pre-cooling",
+          "auto_saving_off": "Power saving off"
+        }
+      }
+    },
+    "binary_sensor": {
+      "water_shortage": {
+        "name": "Water shortage",
+        "state": {
+          "on": "Water shortage",
+          "off": "OK"
+        }
+      },
+      "ice_full": {
+        "name": "Ice bin full",
+        "state": {
+          "on": "Full",
+          "off": "Normal"
+        }
+      },
+      "door_chilling": {
+        "name": "Refrigerator door"
+      },
+      "door_freezing": {
+        "name": "Freezer door"
+      },
+      "door_ice": {
+        "name": "Ice compartment door"
+      },
+      "door_vegetable": {
+        "name": "Vegetable drawer"
+      },
+      "door_freezing_upper": {
+        "name": "Upper freezer door"
+      },
+      "defrosting": {
+        "name": "Defrosting",
+        "state": {
+          "on": "Running",
+          "off": "Stopped"
+        }
+      },
+      "moisturizing": {
+        "name": "Moisturizing",
+        "state": {
+          "on": "Running",
+          "off": "Stopped"
+        }
+      },
+      "uv_sterilization": {
+        "name": "UV sterilization (vegetable)"
+      },
+      "ice_tray_cleaning": {
+        "name": "Ice tray cleaning",
+        "state": {
+          "on": "Cleaning",
+          "off": "Normal"
+        }
+      },
+      "refrigerator_high_temp": {
+        "name": "Refrigerator above 12°C",
+        "state": {
+          "on": "High",
+          "off": "OK"
+        }
+      },
+      "freezer_high_temp": {
+        "name": "Freezer above -10°C",
+        "state": {
+          "on": "High",
+          "off": "OK"
+        }
+      }
+    }
+  }
+}

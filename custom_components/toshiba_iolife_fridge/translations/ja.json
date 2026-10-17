@@ -1,0 +1,204 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "東芝 IoLIFE 冷蔵庫",
+        "description": "IoLIFE アカウントでログインしてローカル通信用の鍵を取得します。パスワードは保存しません。",
+        "data": {
+          "account": "IoLIFE アカウント（メールアドレス）",
+          "password": "パスワード",
+          "host": "冷蔵庫の IP アドレス"
+        }
+      },
+      "select": {
+        "title": "冷蔵庫の選択",
+        "data": {
+          "device_id": "冷蔵庫"
+        }
+      },
+      "reauth_confirm": {
+        "title": "再認証",
+        "description": "冷蔵庫がローカル通信用の鍵を受け付けなくなりました。もう一度ログインして鍵を取り直します。",
+        "data": {
+          "account": "IoLIFE アカウント（メールアドレス）",
+          "password": "パスワード",
+          "host": "冷蔵庫の IP アドレス"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "IoLIFE にログインできませんでした。",
+      "no_refrigerator": "このアカウントに冷蔵庫が登録されていません。",
+      "cannot_connect": "IoLIFE のクラウドに接続できませんでした。"
+    },
+    "abort": {
+      "already_configured": "この冷蔵庫はすでに登録されています。",
+      "reauth_successful": "再認証に成功しました。",
+      "cannot_connect_device": "IoLIFE から鍵は取得できましたが、冷蔵庫が LAN で応答しませんでした。IP アドレスを確認してください。",
+      "cannot_get_key": "IoLIFE からローカル通信用の鍵を取得できませんでした。"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "ice_making_status": {
+        "name": "製氷：状態",
+        "state": {
+          "running": "製氷中",
+          "water_shortage": "給水不足",
+          "ice_full": "満氷",
+          "stop": "停止"
+        }
+      },
+      "ice_making": {
+        "name": "製氷：モード",
+        "state": {
+          "normal": "製氷",
+          "quick": "一気製氷",
+          "off": "製氷オフ"
+        }
+      },
+      "power_saving_mode": {
+        "name": "設定：節電モード",
+        "state": {
+          "normal": "節電オフ",
+          "power_saving_auto": "節電（値1）",
+          "power_saving_auto_plus": "かってにエコ",
+          "power_saving": "節電（値3）",
+          "low_power_cooling": "とってもエコ"
+        }
+      },
+      "cooling": {
+        "name": "設定：上段冷凍室",
+        "state": {
+          "normal": "通常冷凍",
+          "quick_freezing": "急冷凍",
+          "rough_heat_removal": "粗熱取り",
+          "cool_cooking": "その他（値7）",
+          "timer": "お好み冷却",
+          "frozen_rice": "冷凍ごはん"
+        }
+      },
+      "outside_temperature": {
+        "name": "冷蔵庫周囲の温度"
+      },
+      "estimated_power": {
+        "name": "電力：推定消費電力"
+      },
+      "estimated_daily_energy": {
+        "name": "電力：推定消費電力量（直近24時間）"
+      },
+      "error_code": {
+        "name": "エラーコード"
+      },
+      "chilled_mode": {
+        "name": "設定：チルドルーム",
+        "state": {
+          "normal": "通常チルド",
+          "ice_crystal": "氷結晶チルド",
+          "deli": "Deliチルド",
+          "thawing": "解凍モード"
+        }
+      },
+      "refrigerator_setting": {
+        "name": "設定：冷蔵室の温度",
+        "state": {
+          "weak": "弱",
+          "slightly_weak": "やや弱",
+          "medium": "中",
+          "slightly_strong": "やや強",
+          "strong": "強",
+          "auto_controlled": "自動制御"
+        }
+      },
+      "freezer_setting": {
+        "name": "設定：冷凍室の温度",
+        "state": {
+          "weak": "弱",
+          "slightly_weak": "やや弱",
+          "medium": "中",
+          "slightly_strong": "やや強",
+          "strong": "強",
+          "auto_controlled": "自動制御"
+        }
+      },
+      "eco_status": {
+        "name": "運転：かってにエコ",
+        "state": {
+          "normal": "通常運転",
+          "eco": "エコ運転",
+          "precool": "予冷運転",
+          "auto_saving_off": "節電解除"
+        }
+      }
+    },
+    "binary_sensor": {
+      "water_shortage": {
+        "name": "製氷：給水不足",
+        "state": {
+          "on": "給水不足",
+          "off": "OK"
+        }
+      },
+      "ice_full": {
+        "name": "製氷：満氷",
+        "state": {
+          "on": "満氷",
+          "off": "通常"
+        }
+      },
+      "door_chilling": {
+        "name": "ドア：冷蔵室"
+      },
+      "door_freezing": {
+        "name": "ドア：冷凍室"
+      },
+      "door_ice": {
+        "name": "ドア：製氷室"
+      },
+      "door_vegetable": {
+        "name": "ドア：野菜室"
+      },
+      "door_freezing_upper": {
+        "name": "ドア：上段冷凍室"
+      },
+      "defrosting": {
+        "name": "運転：霜取り",
+        "state": {
+          "on": "運転中",
+          "off": "停止"
+        }
+      },
+      "moisturizing": {
+        "name": "運転：うるおい",
+        "state": {
+          "on": "運転中",
+          "off": "停止"
+        }
+      },
+      "uv_sterilization": {
+        "name": "設定：UV除菌（野菜室）"
+      },
+      "ice_tray_cleaning": {
+        "name": "製氷：お手入れ",
+        "state": {
+          "on": "お手入れ中",
+          "off": "通常"
+        }
+      },
+      "refrigerator_high_temp": {
+        "name": "警告：冷蔵室が12℃超",
+        "state": {
+          "on": "高温",
+          "off": "OK"
+        }
+      },
+      "freezer_high_temp": {
+        "name": "警告：冷凍室が-10℃超",
+        "state": {
+          "on": "高温",
+          "off": "OK"
+        }
+      }
+    }
+  }
+}

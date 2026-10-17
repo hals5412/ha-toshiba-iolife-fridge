@@ -1,0 +1,17 @@
+{
+  "domain": "toshiba_iolife_fridge",
+  "name": "Toshiba IoLIFE Refrigerator (Local)",
+  "codeowners": ["@hals5412"],
+  "config_flow": true,
+  "documentation": "https://github.com/hals5412/ha-toshiba-iolife-fridge",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/hals5412/ha-toshiba-iolife-fridge/issues",
+  "loggers": [
+    "midealocal"
+  ],
+  "requirements": [
+    "midea-local>=11.0.1"
+  ],
+  "version": "0.8.0"
+}
