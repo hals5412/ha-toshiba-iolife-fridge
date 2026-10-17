@@ -24,18 +24,26 @@
           "password": "パスワード",
           "host": "冷蔵庫の IP アドレス"
         }
+      },
+      "reconfigure": {
+        "title": "IP アドレスの変更",
+        "description": "冷蔵庫の IP アドレスだけを変更します。鍵はそのまま使うので、ログインは不要です。",
+        "data": {
+          "host": "冷蔵庫の IP アドレス"
+        }
       }
     },
     "error": {
       "invalid_auth": "IoLIFE にログインできませんでした。",
       "no_refrigerator": "このアカウントに冷蔵庫が登録されていません。",
-      "cannot_connect": "IoLIFE のクラウドに接続できませんでした。"
+      "cannot_connect": "IoLIFE のクラウドに接続できませんでした。",
+      "cannot_connect_device": "冷蔵庫が LAN で応答しませんでした。IP アドレスを確認してください。",
+      "cannot_get_key": "IoLIFE からローカル通信用の鍵を取得できませんでした。"
     },
     "abort": {
       "already_configured": "この冷蔵庫はすでに登録されています。",
       "reauth_successful": "再認証に成功しました。",
-      "cannot_connect_device": "IoLIFE から鍵は取得できましたが、冷蔵庫が LAN で応答しませんでした。IP アドレスを確認してください。",
-      "cannot_get_key": "IoLIFE からローカル通信用の鍵を取得できませんでした。"
+      "reconfigure_successful": "IP アドレスを変更しました。"
     }
   },
   "entity": {

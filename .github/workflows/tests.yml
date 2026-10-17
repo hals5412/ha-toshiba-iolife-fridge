@@ -1,0 +1,21 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: Install
+        run: python -m pip install pytest-homeassistant-custom-component midea-local
+      - name: Protocol tests (without Home Assistant)
+        run: python -m pytest tests
+      - name: Home Assistant tests
+        run: python -m pytest tests_ha

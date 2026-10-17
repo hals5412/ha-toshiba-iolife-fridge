@@ -24,18 +24,26 @@
           "password": "Password",
           "host": "Refrigerator IP address"
         }
+      },
+      "reconfigure": {
+        "title": "Change IP address",
+        "description": "Change only the refrigerator's IP address. The stored key is kept, so no login is needed.",
+        "data": {
+          "host": "Refrigerator IP address"
+        }
       }
     },
     "error": {
       "invalid_auth": "Could not log in to IoLIFE.",
       "no_refrigerator": "No refrigerator is registered to this account.",
-      "cannot_connect": "Could not reach the IoLIFE cloud."
+      "cannot_connect": "Could not reach the IoLIFE cloud.",
+      "cannot_connect_device": "The refrigerator did not answer on the LAN. Check the IP address.",
+      "cannot_get_key": "Could not get the local key from IoLIFE."
     },
     "abort": {
       "already_configured": "This refrigerator is already configured.",
       "reauth_successful": "Re-authentication was successful.",
-      "cannot_connect_device": "Got keys from IoLIFE, but the refrigerator did not answer on the LAN. Check the IP address.",
-      "cannot_get_key": "Could not get the local key from IoLIFE."
+      "reconfigure_successful": "The IP address was updated."
     }
   },
   "entity": {

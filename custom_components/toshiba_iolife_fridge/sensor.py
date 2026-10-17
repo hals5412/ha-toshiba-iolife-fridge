@@ -153,7 +153,11 @@ RESTORED_KEYS = {"eco_status"}
 
 
 class FridgeRestoreSensor(FridgeSensor, RestoreEntity):
-    """通知が届くまでは、再起動前の最後の値を表示する."""
+    """通知が届くまでは、再起動前の最後の値を表示する.
+
+    一度でも通知を受け取ったら復元値は使わない。その後に未知の値が届いた場合は、
+    古い復元値に戻さず「不明」にする。
+    """
 
     _restored: str | None = None
 
@@ -165,5 +169,6 @@ class FridgeRestoreSensor(FridgeSensor, RestoreEntity):
 
     @property
     def native_value(self) -> str | int | float | None:
-        value = super().native_value
-        return self._restored if value is None else value
+        if self.coordinator.data.eco_status_received:
+            return super().native_value
+        return self._restored

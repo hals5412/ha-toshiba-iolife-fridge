@@ -207,3 +207,18 @@ def test_energy_only_updates_from_query_responses() -> None:
     data = asyncio.run(scenario()).data
     assert data.estimated_daily_energy == 1403
     assert data.door_chilling is True
+
+
+def test_unknown_eco_notification_is_marked_as_received() -> None:
+    async def scenario():
+        coordinator = _coordinator()
+        coordinator._handle_status(_base())
+        assert coordinator.data.eco_status_received is False
+        coordinator._handle_eco_status("precool")
+        coordinator._handle_eco_status(None)
+        coordinator._handle_status(_base())
+        return coordinator
+
+    data = asyncio.run(scenario()).data
+    assert data.eco_status is None
+    assert data.eco_status_received is True

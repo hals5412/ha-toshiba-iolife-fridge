@@ -143,6 +143,8 @@ class FridgeStatus:
     refrigerator_high_temp: bool | None = None
     freezer_high_temp: bool | None = None
     eco_status: str | None = None
+    # かってにエコの通知を一度でも受け取ったか (未知の値で eco_status が None の場合も True)
+    eco_status_received: bool = False
 
 
 @dataclass(frozen=True)

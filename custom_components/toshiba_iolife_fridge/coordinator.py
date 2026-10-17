@@ -31,7 +31,12 @@ UNAVAILABLE_AFTER_FAILURES = 3
 AUTH_FAILURE_THRESHOLD = 3
 FIRST_DATA_TIMEOUT = 30
 # 状態全体 (base) には含まれず、通知でしか届かない値
-NON_BASE_FIELDS = ("refrigerator_high_temp", "freezer_high_temp", "eco_status")
+NON_BASE_FIELDS = (
+    "refrigerator_high_temp",
+    "freezer_high_temp",
+    "eco_status",
+    "eco_status_received",
+)
 
 
 class FridgeCoordinator(DataUpdateCoordinator[FridgeStatus]):
@@ -92,7 +97,7 @@ class FridgeCoordinator(DataUpdateCoordinator[FridgeStatus]):
 
     @callback
     def _handle_eco_status(self, eco_status: str | None) -> None:
-        self._apply_partial(eco_status=eco_status)
+        self._apply_partial(eco_status=eco_status, eco_status_received=True)
 
     @callback
     def _apply_partial(self, **changes: object) -> None:

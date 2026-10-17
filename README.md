@@ -4,7 +4,7 @@
 > An unofficial Home Assistant custom integration that reads Toshiba IoLIFE refrigerators (type `0xCA`, `55 AA CC 33` frames) directly over the LAN, with push updates for doors and the ice maker's water shortage.
 > It uses your IoLIFE account only to fetch the local token/key (at setup and re-authentication); everything else stays on your LAN.
 > Only tested with a Japanese GR-Y540XFS. Other models may not work. Provided as is, without support guarantees.
-> No need to set up the built-in Midea integration. Install via HACS (custom repository) or copy `custom_components/toshiba_iolife_fridge` to `/config/custom_components/`.
+> Requires Home Assistant 2026.9.0 or later. No need to set up the built-in Midea integration. Install via HACS (custom repository) or copy `custom_components/toshiba_iolife_fridge` to `/config/custom_components/`.
 
 **東芝の公式ソフトウェアではありません。** 動作を確認したのは GR-Y540XFS（日本向け）だけです。ほかの機種で動くかは分かりません。不具合の報告は歓迎しますが、対応は保証できません。
 
@@ -13,13 +13,26 @@
 
 ## 背景
 
-HA 2026.8 以降の Midea 統合（Toshiba Lifestyle）では、IoLIFE アカウントでのログインとローカル通信用の鍵（token/key）の取得、冷蔵庫との認証までは成功します。
-ところが、状態の問い合わせでは失敗します。原因は電文の形式です。
+この統合を作った 2026-09〜10 の時点（HA 2026.9〜2026.10、midea-local 12.2.0 まで）では、HA 本体の Midea 統合（サーバーに Toshiba Iolife を選択）でも、IoLIFE アカウントでのログイン、ローカル通信用の鍵（token/key）の取得、冷蔵庫との認証までは成功しました。
+ところが、状態の問い合わせには冷蔵庫が応答しませんでした。原因は電文の形式です。
 
 - Midea 標準の冷蔵庫は `AA` で始まる電文を使う
 - 東芝の IoLIFE 冷蔵庫は `55 AA CC 33` で始まる独自の電文を使う（IoLIFE アプリの定義ファイル `T_0008_2500_CA_8.lua` に準拠）
 
 この統合は、認証と暗号化には midea-local をそのまま使い、中身の電文だけを東芝形式で組み立てます。
+
+その後、この電文形式は midea-local 本体にも取り込まれました（12.3.0。[#868](https://github.com/midea-lan/midea-local/pull/868)、[#884](https://github.com/midea-lan/midea-local/pull/884)）。HA 本体の Midea 統合がこの版を使うようになれば、HA 本体だけでも基本的な項目は読めるようになる見込みです。
+
+### HA 本体の Midea 統合との違い
+
+midea-local 12.3.0 が GR-Y540XFS から読み取るのは、上段冷凍室のモード、冷蔵室・冷凍室の温度設定（数値のまま）、製氷モードと製氷状態、4 か所のドアの開閉、消費電力量です（定期的な問い合わせで取得）。HA 本体の Midea 統合で、このうちどれがエンティティになるかは HA 側の実装しだいです。
+この統合では、それに加えて次の項目を扱います。
+
+- 冷蔵庫からの通知を受け取り、5 か所のドアの開閉を開け閉めした瞬間に反映する
+- 温度設定やモードを、アプリと同じ名前（弱〜強、急冷凍など）で表示する
+- チルドルーム、節電モード、UV 除菌
+- かってにエコの運転状態、高温警告（ドア情報の通知でのみ届く値）
+- 冷蔵庫周囲の温度、推定消費電力、霜取り・うるおい運転、製氷皿のお手入れ、エラーコード
 
 ## 取得できる項目
 
@@ -83,6 +96,8 @@ HA 2026.8 以降の Midea 統合（Toshiba Lifestyle）では、IoLIFE アカウ
 
 ## 導入
 
+Home Assistant 2026.9.0 以降が必要です（2026.9〜2026.10 で動作を確認）。
+
 1. HACS の「カスタムリポジトリ」にこのリポジトリ（種類は Integration）を追加してインストールするか、`custom_components/toshiba_iolife_fridge` を HA の `/config/custom_components/` にコピーする。そのあと HA を再起動する。
 2. 「設定 → デバイスとサービス → 統合を追加」で「Toshiba IoLIFE Refrigerator (Local)」を選ぶ。
 3. IoLIFE アカウント、パスワード、冷蔵庫の IP アドレスを入力する。
@@ -90,6 +105,7 @@ HA 2026.8 以降の Midea 統合（Toshiba Lifestyle）では、IoLIFE アカウ
 設定フローでは IoLIFE にログインして鍵を取得し、その鍵で冷蔵庫が実際に応答することを確かめてから登録します。
 保存するのは鍵だけで、パスワードは保存しません。
 冷蔵庫の再登録や Wi-Fi の設定し直しで鍵が変わった場合は、HA から再認証を求められるので、もう一度ログインしてください。
+冷蔵庫の IP アドレスが変わった場合は、統合の「再設定」から IP アドレスだけを変更できます（ログインは不要です）。
 
 HA 本体の Midea 統合を設定する必要はありません。IoLIFE へのログインと鍵の取得も、この統合だけで行います。
 依存ライブラリの midea-local は、HA が manifest の指定に従って自動で入れます。
@@ -104,6 +120,13 @@ python -m pytest tests
 ```
 
 `tests/test_protocol.py` は、実機から取得した応答電文を使って解析処理を確認します（HA は不要です）。
+
+設定フローなど HA 本体を使うテストは `tests_ha` にあります。HA のテスト用パッケージは Linux 向けなので、Linux（WSL を含む）で実行してください。
+
+```bash
+python -m pip install pytest-homeassistant-custom-component midea-local
+python -m pytest tests_ha
+```
 
 ## ライセンス
 

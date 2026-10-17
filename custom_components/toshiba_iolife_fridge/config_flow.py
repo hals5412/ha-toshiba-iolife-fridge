@@ -45,6 +45,10 @@ class NoWorkingKey(Exception):
     """取得した token/key のどれでも LAN 問い合わせが通らない."""
 
 
+class CannotGetKey(Exception):
+    """IoLIFE からローカル通信用の鍵を取得できない."""
+
+
 class ToshibaIolifeFridgeConfigFlow(ConfigFlow, domain=DOMAIN):
     """東芝 IoLIFE 冷蔵庫の設定フロー."""
 
@@ -56,6 +60,8 @@ class ToshibaIolifeFridgeConfigFlow(ConfigFlow, domain=DOMAIN):
         self._host = ""
         self._cloud = None
         self._appliances: dict[int, dict[str, Any]] = {}
+        # 冷蔵庫の選択画面から鍵の確認に失敗したとき、最初の画面に出すエラー
+        self._pending_error: str | None = None
 
     async def _async_login(self) -> None:
         cloud = get_midea_cloud(
@@ -152,9 +158,20 @@ class ToshibaIolifeFridgeConfigFlow(ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("IoLIFE cloud error")
                 errors["base"] = "cannot_connect"
             else:
-                if len(self._appliances) == 1:
-                    return await self._async_finish(next(iter(self._appliances)))
-                return await self.async_step_select()
+                if len(self._appliances) > 1:
+                    return await self.async_step_select()
+                device_id = next(iter(self._appliances))
+                await self.async_set_unique_id(str(device_id))
+                self._abort_if_unique_id_configured()
+                try:
+                    return await self._async_finish(device_id)
+                except NoWorkingKey:
+                    errors["base"] = "cannot_connect_device"
+                except CannotGetKey:
+                    errors["base"] = "cannot_get_key"
+        elif self._pending_error:
+            errors["base"] = self._pending_error
+            self._pending_error = None
         return self.async_show_form(
             step_id="user",
             data_schema=self._schema(self._host),
@@ -165,7 +182,17 @@ class ToshibaIolifeFridgeConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         if user_input is not None:
-            return await self._async_finish(int(user_input[CONF_DEVICE_ID]))
+            device_id = int(user_input[CONF_DEVICE_ID])
+            await self.async_set_unique_id(str(device_id))
+            self._abort_if_unique_id_configured()
+            try:
+                return await self._async_finish(device_id)
+            except NoWorkingKey:
+                self._pending_error = "cannot_connect_device"
+            except CannotGetKey:
+                self._pending_error = "cannot_get_key"
+            # IP アドレスを直せるように、最初の画面に戻る
+            return await self.async_step_user()
         choices = {
             str(device_id): f"{info.get('name') or device_id} ({device_id})"
             for device_id, info in self._appliances.items()
@@ -176,16 +203,16 @@ class ToshibaIolifeFridgeConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
     async def _async_finish(self, device_id: int) -> ConfigFlowResult:
-        await self.async_set_unique_id(str(device_id))
-        if self.source != "reauth":
-            self._abort_if_unique_id_configured()
+        """鍵を取得して確かめ、登録 (再認証なら更新) する.
+
+        冷蔵庫が応答しなければ NoWorkingKey、鍵を取得できなければ CannotGetKey を送出し、
+        呼び出し側の画面でエラーを表示して入力し直せるようにする。
+        """
         try:
             pair = await self._async_fetch_working_key(device_id)
-        except NoWorkingKey:
-            return self.async_abort(reason="cannot_connect_device")
-        except MideaCloudError:
+        except MideaCloudError as err:
             _LOGGER.exception("IoLIFE cloud error while fetching keys")
-            return self.async_abort(reason="cannot_get_key")
+            raise CannotGetKey from err
 
         info = self._appliances[device_id]
         data = {
@@ -235,9 +262,46 @@ class ToshibaIolifeFridgeConfigFlow(ConfigFlow, domain=DOMAIN):
                 if device_id not in self._appliances:
                     errors["base"] = "no_refrigerator"
                 else:
-                    return await self._async_finish(device_id)
+                    try:
+                        return await self._async_finish(device_id)
+                    except NoWorkingKey:
+                        errors["base"] = "cannot_connect_device"
+                    except CannotGetKey:
+                        errors["base"] = "cannot_get_key"
         return self.async_show_form(
             step_id="reauth_confirm",
             data_schema=self._schema(self._host),
+            errors=errors,
+        )
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """登録済みの冷蔵庫の IP アドレスだけを変える (鍵はそのまま使う)."""
+        entry = self._get_reconfigure_entry()
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            host = user_input[CONF_HOST].strip()
+            try:
+                await self.hass.async_add_executor_job(
+                    query_status,
+                    host,
+                    entry.data[CONF_DEVICE_ID],
+                    entry.data[CONF_TOKEN],
+                    entry.data[CONF_KEY],
+                    entry.data.get(CONF_PORT, DEFAULT_PORT),
+                )
+            except FridgeError as err:
+                _LOGGER.debug("refrigerator did not answer at %s: %s", host, err)
+                errors["base"] = "cannot_connect_device"
+            else:
+                return self.async_update_reload_and_abort(
+                    entry, data_updates={CONF_HOST: host}
+                )
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=vol.Schema(
+                {vol.Required(CONF_HOST, default=entry.data[CONF_HOST]): str}
+            ),
             errors=errors,
         )
